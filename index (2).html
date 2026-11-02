@@ -142,9 +142,9 @@ let model, webcam, labelContainer, maxPredictions, lastPrediction = 0;
 async function init1() {
     document.getElementById("start-btn1").classList.add("hidden");
     document.getElementById("start-btn2").classList.add("hidden");
-    const modelURL = URL1 + "model.json";
-    const metadataURL = URL1 + "metadata.json";
-    model = await tmImage.load(modelURL, metadataURL);
+    const modelURL1 = URL1 + "model.json";
+    const metadataURL1 = URL1 + "metadata.json";
+    model = await tmImage.load(modelURL1, metadataURL1);
     maxPredictions = model.getTotalClasses();
 
     const flip = false;
@@ -162,9 +162,9 @@ async function init1() {
 async function init2() {
     document.getElementById("start-btn2").classList.add("hidden");
     document.getElementById("start-btn1").classList.add("hidden");
-    const modelURL = URL2 + "model.json";
-    const metadataURL = URL2 + "metadata.json";
-    model = await tmImage.load(modelURL, metadataURL);
+    const modelURL2 = URL2 + "model.json";
+    const metadataURL2 = URL2 + "metadata.json";
+    model = await tmImage.load(modelURL2, metadataURL2);
     maxPredictions = model.getTotalClasses();
 
     const flip = false;
