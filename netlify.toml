@@ -1,0 +1,5 @@
+[build]
+  # Site files live in the "index(2)" folder (matches the Base directory set in the Netlify UI).
+  base = "index(2)"
+  publish = "."
+  command = ""
