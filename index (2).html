@@ -2,92 +2,49 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>My Web Page</title>
+    <meta name="viewport" content="width=device-width", initial-scale=1, user-scalable="yes">
+    <title>Invasii - The Invasive Species Identifier</title>
     <style>
-        body {
-            font-family: 'Georgia', serif;
-            background: linear-gradient(180deg, #1a2e1a 0%, #0d1f0d 100%);
-            color: #d4e8d4;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body{
+            font-family:"Geneva", sans-serif;
+            background: linear-gradient(55deg, #5b8a5e 0%, #346d34 50%, #1b6820 100%);
+            color: #ddffe1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 24px 16px;
             justify-content: center;
-            }   
+        }
         h1 {
-            font-size: 6rem;
-            font-weight: 400;
-            font-style: oblique;
-            margin-bottom: 5px;
-            color: #a8d5a2;
-            letter-spacing: 1px;
+            font-size: 7.0rem;
+            font-weight: 550;
+            font-style: normal;
+            margin-bottom: 55px;
+            letter-spacing: 2px;
             text-align: center;
+            text-shadow: 4.1px 4.5px 6.2px rgb(59, 59, 59);
         }
-        h2 {
-            font-size: 2.2rem;
-            font-weight: 400;
-            font-style: oblique;
-            margin-bottom: 25px;
-            color: #a8d5a2;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-        p {
+        a {
             font-size: 1.8rem;
-            font-weight: 400;
-            font-style: italic ;
-            margin-bottom: 20px;
-            color: #a8d5a2;
-            letter-spacing: 1px;
+            font-weight: 200;
+            font-style: oblique;
+            margin-bottom: 15px;
+            letter-spacing: 1.5px;
             text-align: center;
+            display: block;
+            text-decoration: none;
+            color: #ddffe1;
         }
-        #start-btn1 {
-            background: linear-gradient(135deg, #da201a, #db810a);
-            color: #e8f5e8;
-            border: 1px solid #000000;
-            padding: 20px 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 30px;
-            cursor: pointer;
-            margin-bottom: 24px;
-            transition: transform 0.1s;
-            box-shadow: 0 4px 16px rgba(45, 90, 39, 0.5);
-        }
-        #start-btn1:active { transform: scale(0.96); }
-        #start-btn1.hidden { display: none; }
-        #start-btn2 {
-            background: linear-gradient(135deg, #c66bdd, #6c0286);
-            color: #e8f5e8;
-            border: 1px solid #000000;
-            padding: 20px 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 30px;
-            cursor: pointer;
-            margin-bottom: 24px;
-            transition: transform 0.1s;
-            box-shadow: 0 4px 16px rgba(45, 90, 39, 0.5);
-        }
-        #start-btn2:active { transform: scale(0.96); }
-        #start-btn2.hidden { display: none; }
         .bottom-text {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: absolute;
+            bottom: 15px;
             margin: 0;
+            left: 50%;
+            transform: translate(-50%);
         }
-        .button-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-        }
-         #webcam-container {
+        #webcam-container {
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 8px 32px rgba(0,0,0,0.6);
@@ -122,85 +79,60 @@
     </style>
 </head>
 <body>
-<h1 class="center-text">Invasii</h1>
-<h2 class="center-text">- The Invasive Plants Finder Model - </h2>
-<div class="button-container">
-    <button id="start-btn1" onclick="init1()" class="left-text">Autumn Mode</button>
-    <button id="start-btn2" onclick="init2()" class="right-text">Spring Mode</button>
-</div>
-<p class="bottom-text">Made by Kockovňa</p>
+<h1>Invasii</h1>
+<a href="https://kockovna9.webnode.sk/" class="bottom-text" target="_blank">Made by Kockovňa</a>
 <div id="webcam-container"></div>
 <div id="label-container"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 <script>
-const URL1 = "https://teachablemachine.withgoogle.com/models/ql8UVS0Rk/";
-const URL2 = "https://teachablemachine.withgoogle.com/models/t3D41cELc/"
-let model, webcam, labelContainer, maxPredictions, lastPrediction = 0;
+    const URL = "https://teachablemachine.withgoogle.com/models/ql8UVS0Rk/";
+    let model, webcam, labelContainer, maxPredictions, lastPrediction = 0;
 
-async function init1() {
-    document.getElementById("start-btn1").classList.add("hidden");
-    document.getElementById("start-btn2").classList.add("hidden");
-    const modelURL = URL1 + "model.json";
-    const metadataURL = URL1 + "metadata.json";
-    model = await tmImage.load(modelURL, metadataURL);
-    maxPredictions = model.getTotalClasses();
+    async function init() {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
 
-    const flip = false;
-    webcam = new tmImage.Webcam(200, 200, flip);
-    await webcam.setup({ facingMode: "environment" });
-    await webcam.play();
+        const flip = false;
+        webcam = new tmImage.Webcam(200, 200, flip);
+        await webcam.setup({ facingMode: { exact: "environment" } });
+        await webcam.play();
+        requestAnimationFrame(loop);
 
-    document.getElementById("webcam-container").appendChild(webcam.canvas);
-    labelContainer = document.getElementById("label-container");
-    for (let i = 0; i < maxPredictions; i++) {
-        labelContainer.appendChild(document.createElement("div"));
-
+        document.getElementById("webcam-container").appendChild(webcam.canvas);
+        labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < maxPredictions; i++) {
+            labelContainer.appendChild(document.createElement("div"));
+        }
     }
-}
-async function init2() {
-    document.getElementById("start-btn2").classList.add("hidden");
-    document.getElementById("start-btn1").classList.add("hidden");
-    const modelURL = URL2 + "model.json";
-    const metadataURL = URL2 + "metadata.json";
-    model = await tmImage.load(modelURL, metadataURL);
-    maxPredictions = model.getTotalClasses();
 
-    const flip = false;
-    webcam = new tmImage.Webcam(200, 200, flip);
-    await webcam.setup({ facingMode:"environment" });
-    await webcam.play();
-    
+    async function loop(timestamp) {
+        webcam.update();
+        if (timestamp - lastPrediction > 150) {
+            await predict();
+            lastPrediction = timestamp;
+        }
+        requestAnimationFrame(loop);
+    }
 
-    document.getElementById("webcam-container").appendChild(webcam.canvas);
-    labelContainer = document.getElementById("label-container");
-    for (let i = 0; i < maxPredictions; i++) {
-        labelContainer.appendChild(document.createElement("div"));
+    async function predict() {
+        const prediction = await model.predict(webcam.canvas);
+        let bestIdx = 0;
+        for (let i = 0; i < maxPredictions; i++) {
+            if (prediction[i].probability > prediction[bestIdx].probability) bestIdx = i;
+        }
+        for (let i = 0; i < maxPredictions; i++) {
+            const el = labelContainer.childNodes[i];
+            el.textContent = prediction[i].className + "  " + (prediction[i].probability * 100).toFixed(0) + "%";
+            el.classList.toggle("best", i === bestIdx);
+        }
     }
-    
-}
-async function loop(timestamp) {
-    webcam.update();
-    if (timestamp - lastPrediction > 150) {
-        await predict();
-        lastPrediction = timestamp;
-    }
-    requestAnimationFrame(loop);
-}
-
-async function predict() {
-    const prediction = await model.predict(webcam.canvas);
-    let bestIdx = 0;
-    for (let i = 0; i < maxPredictions; i++) {
-        if (prediction[i].probability > prediction[bestIdx].probability) bestIdx = i;
-    }
-    for (let i = 0; i < maxPredictions; i++) {
-        const el = labelContainer.childNodes[i];
-        el.textContent = prediction[i].className + "  " + (prediction[i].probability * 100).toFixed(0) + "%";
-        el.classList.toggle("best", i === bestIdx);
-    }
-}
+    window.addEventListener("DOMContentLoaded", () => {
+        init();
+    })
 </script>
 </body>
-</html>
+</html>   
